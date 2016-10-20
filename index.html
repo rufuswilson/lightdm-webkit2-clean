@@ -1,0 +1,258 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
+<html>
+<head>
+	<style>
+		html, body {
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+			margin: 0;
+		}
+
+		body {
+			background: #00002C;
+			color: #FFFFFF;
+			font-size: 22px;
+		}
+
+		.container {
+			width: 100%;
+			height: 100%;
+			display: -webkit-flex;
+			display: flex;
+			-webkit-flex-direction: column;
+			flex-direction: column;
+		}
+
+		.topBox, .inputBox, .messageBox {
+			width: 100%;
+			height: 33.33%;
+			text-align: center;
+		}
+
+		.inputBox {
+			position: relative;
+		}
+
+		.wrapper {
+			height: 85px;
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			margin: auto;
+		}
+
+		.topBox {
+			text-align: right;
+			padding: 15px;
+			box-sizing: border-box;
+		}
+
+		.messageBox {
+			text-align: center;
+			visibility: hidden;
+		}
+		
+		.dateBox{
+			position: absolute;
+			top: 15px;
+			left: 15px;
+			text-align: center;
+		}
+		
+		.hostName{
+			font-size: 28px;
+			position: absolute;
+			width: 300px;
+			bottom: 30px;
+			left: 50%;
+			margin-left: -150px;
+			text-align: center;
+		}
+		
+		input {
+			background: #FFFFFF !important;
+			color: #000000 !important;
+			text-align: center;
+			font-size: 22px;
+		}
+		
+		svg {
+			vertical-align:text-bottom;
+		}
+		path {
+			fill: #ffffff;
+		}
+	</style>
+	
+	<!--For testing the theme in a web browser -->
+	<script type="text/javascript" src="../_vendor/js/mock.js"></script>
+
+	<!-- Vendor JavaScript -->
+	<script src="../_vendor/js/jquery.min.js"></script>
+	<script src="../_vendor/js/bootstrap.min.js"></script>
+	<script src="../_vendor/js/moment-with-locales.min.js"></script>
+	<script src="../_vendor/js/js.cookie.min.js"></script>
+
+	<script>
+		/*********************************************************************/
+		/*                Callbacks for lightdm-webkit-greeter               */
+		/*********************************************************************/
+
+		/**
+		 * show_prompt callback.
+		 */
+		function show_prompt(text, type) {
+			// type is either "text" or "password"
+			prompt = document.getElementById("prompt");
+			prompt.innerHTML = text;
+			entry = document.getElementById("entry");
+			entry.value = "";    // clear entry
+			entry.type = type;
+			entry.focus();
+		}
+
+		/**
+		 * show_message callback.
+		 */
+		function show_message(text, type) {
+			if (text.length == 0)
+				return;
+			messages = document.getElementById("messages");
+			messages.style.visibility = "visible";
+			// type is either "info" or "error"
+			if (type == "error") {
+				text = "<font color=\"red\">" + text + "</font>";
+			}
+			text = text + "<br>";
+			messages.innerHTML = messages.innerHTML + text;
+		}
+
+		/**
+		 * authentication_complete callback.
+		 */
+		function authentication_complete() {
+			if (lightdm.is_authenticated) {
+				lightdm.start_session_sync(); // Start default session
+			} else {
+				show_message("Authentication Failed", "error");
+				setTimeout(start_authentication, 3000);
+			}
+		}
+
+		/**
+		 * autologin_timer_expired callback.
+		 */
+		function autologin_timer_expired(username) {
+			/* Stub.  Does nothing. */
+		}
+
+		/*********************************************************************/
+		/*                Functions local to this greeter                    */
+		/*********************************************************************/
+
+		/**
+		 * Clear messages
+		 */
+		function clear_messages() {
+			messages = document.getElementById("messages");
+			messages.innerHTML = "";
+			messages.style.visibility = "hidden";
+		}
+
+		/**
+		 * Initialize date and sets timer
+		 */
+		function initialize_date() {
+			format = 'L<br/>LTS';
+			datetime = document.getElementById("datetime");
+			moment.locale( window.navigator.languages );
+			datetime.innerHTML = moment().format( format );
+			setInterval( () => { datetime.innerHTML = moment().format( format ); }, 1000 );
+		}
+
+		/**
+		 * Populates the hostname
+		 */
+		function initialize_hostname() {
+			hostname = document.getElementById("hostname");
+			hostname.innerHTML = lightdm.hostname;
+		}
+
+		/**
+		 * Kickoff the authentication process
+		 */
+		function start_authentication() {
+			clear_messages();
+			initialize_date();
+			initialize_hostname();
+			lightdm.start_authentication();   // start with null userid, have pam prompt for userid.
+		}
+		
+		/**
+		 * handle the input from the entry field.
+		 */
+		function handle_input() {
+			entry = document.getElementById("entry");
+			lightdm.respond(entry.value);
+		}
+		
+		/**
+		 * handle the restart button.
+		 */
+		function handle_restart() {
+			if (lightdm.can_restart) {
+				lightdm.restart();
+			}
+		}
+		
+		/**
+		 * handle the shutdown button.
+		 */
+		function handle_shutdown() {
+			if (lightdm.can_shutdown) {
+				lightdm.shutdown();
+			}
+		}
+		
+		$( window ).load( () => {
+			start_authentication();
+		} );
+	</script>
+
+</head>
+
+<body>
+<div class="container">
+	<div class="dateBox" id="datetime"></div>
+	<div class="hostName" id="hostname">HOSTNAME</div>
+	<div class="topBox">
+		<svg onclick="javascript:handle_restart();" xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 0 50 50">
+			<path d="M 24.8125 6 A 2.0021961 2.0021961 0 1 0 25 10 C 33.321986 10 40 16.678014 40 25 C 40 33.321986 33.321986 40 25 40 C 16.678014 40 10 33.321986 10 25 C 10 21.072631 11.544923 17.514706 14 14.84375 L 14 19 A 2.0002 2.0002 0 1 0 18 19 L 18 10 L 18 8 L 16 8 L 7 8 A 2.0002 2.0002 0 0 0 6.8125 8 A 2.0021961 2.0021961 0 1 0 7 12 L 11.21875 12 C 8.0317805 15.389289 6 19.951151 6 25 C 6 35.478014 14.521986 44 25 44 C 35.478014 44 44 35.478014 44 25 C 44 14.521986 35.478014 6 25 6 A 2.0002 2.0002 0 0 0 24.8125 6 z" ></path>
+		</svg>
+		<svg onclick="javascript:handle_shutdown();" xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 0 50 50">
+			<path d="M 24.78125 1.96875 A 2.0002 2.0002 0 0 0 23 4 L 23 24 A 2.0002 2.0002 0 1 0 27 24 L 27 4 A 2.0002 2.0002 0 0 0 24.96875 1.96875 A 2.0002 2.0002 0 0 0 24.78125 1.96875 z M 14.96875 4.46875 A 2.0002 2.0002 0 0 0 14.75 4.5 A 2.0002 2.0002 0 0 0 14.03125 4.75 C 6.8161639 8.6855015 2 16.266667 2 25 C 2 37.68046 12.31954 48 25 48 C 37.68046 48 48 37.68046 48 25 C 48 16.25 43.074021 8.6852272 35.96875 4.75 A 2.0002441 2.0002441 0 1 0 34.03125 8.25 C 39.925979 11.514773 44 17.75 44 25 C 44 35.51954 35.51954 44 25 44 C 14.48046 44 6 35.51954 6 25 C 6 17.733333 9.9838361 11.514499 15.96875 8.25 A 2.0002 2.0002 0 0 0 14.96875 4.46875 z"></path>
+		</svg>
+<!--
+		<img src="power_button.png"/>
+-->
+	</div>
+	<div class="inputBox">
+		<div class="wrapper">
+			<div id="prompt"></div>
+			<form action="javascript: handle_input()">
+				<input id="entry" />
+				<span id="cancel" onclick="javascript:lightdm.start_authentication();">
+					<svg xmlns="http://www.w3.org/2000/svg" width="25px" height="25px" viewBox="10 10 30 30">
+						<path d="M 15.125 12.28125 L 12.28125 15.125 L 22.21875 25 L 12.28125 34.875 L 15.125 37.71875 L 25.0625 27.84375 L 35 37.71875 L 37.8125 34.875 L 27.90625 25 L 37.8125 15.125 L 35 12.28125 L 25.0625 22.15625 L 15.125 12.28125 z" ></path>
+					</svg>
+				</span>
+			</form>
+		</div>
+	</div>
+	<div class="messageBox" id="messages"></div>
+</div>
+</body>
+</html>
