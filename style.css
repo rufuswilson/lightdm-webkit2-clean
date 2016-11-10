@@ -1,0 +1,90 @@
+
+html, body {
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	margin: 0;
+}
+
+body {
+	background: #00002C;
+	color: #FFFFFF;
+	font-size: 22px;
+}
+
+.container {
+	width: 100%;
+	height: 100%;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-flex-direction: column;
+	flex-direction: column;
+}
+
+.topBox, .inputBox, .messageBox {
+	width: 100%;
+	height: 33.33%;
+	text-align: center;
+}
+
+.inputBox {
+	position: relative;
+}
+
+.wrapper {
+	height: 85px;
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	margin: auto;
+}
+
+.topBox {
+	text-align: right;
+	padding: 15px;
+	box-sizing: border-box;
+}
+
+.messageBox {
+	text-align: center;
+	visibility: hidden;
+}
+
+.dateBox{
+	position: absolute;
+	top: 15px;
+	left: 15px;
+	text-align: center;
+}
+
+.hostName{
+	font-size: 28px;
+	position: absolute;
+	width: 300px;
+	bottom: 30px;
+	left: 50%;
+	margin-left: -150px;
+	text-align: center;
+}
+
+.sessions{
+	display:block;
+	text-align: center;
+	padding-top:10px;
+}
+
+input {
+	background: #FFFFFF !important;
+	color: #000000 !important;
+	text-align: center;
+	font-size: 22px;
+}
+
+svg {
+	vertical-align:text-bottom;
+}
+path, polygon {
+	fill: #ffffff;
+}

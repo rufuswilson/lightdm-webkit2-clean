@@ -1,254 +1,40 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN">
 <html>
 <head>
-	<style>
-		html, body {
-			width: 100%;
-			height: 100%;
-			overflow: hidden;
-			margin: 0;
-		}
-
-		body {
-			background: #00002C;
-			color: #FFFFFF;
-			font-size: 22px;
-		}
-
-		.container {
-			width: 100%;
-			height: 100%;
-			display: -webkit-flex;
-			display: flex;
-			-webkit-flex-direction: column;
-			flex-direction: column;
-		}
-
-		.topBox, .inputBox, .messageBox {
-			width: 100%;
-			height: 33.33%;
-			text-align: center;
-		}
-
-		.inputBox {
-			position: relative;
-		}
-
-		.wrapper {
-			height: 85px;
-			position: absolute;
-			left: 0;
-			right: 0;
-			top: 0;
-			bottom: 0;
-			margin: auto;
-		}
-
-		.topBox {
-			text-align: right;
-			padding: 15px;
-			box-sizing: border-box;
-		}
-
-		.messageBox {
-			text-align: center;
-			visibility: hidden;
-		}
-		
-		.dateBox{
-			position: absolute;
-			top: 15px;
-			left: 15px;
-			text-align: center;
-		}
-		
-		.hostName{
-			font-size: 28px;
-			position: absolute;
-			width: 300px;
-			bottom: 30px;
-			left: 50%;
-			margin-left: -150px;
-			text-align: center;
-		}
-		
-		input {
-			background: #FFFFFF !important;
-			color: #000000 !important;
-			text-align: center;
-			font-size: 22px;
-		}
-		
-		svg {
-			vertical-align:text-bottom;
-		}
-		path {
-			fill: #ffffff;
-		}
-	</style>
-	
-	<!--For testing the theme in a web browser -->
+	<!--link rel="stylesheet" href="../_vendor/css/bootstrap.min.css"-->
+	<!--link rel="stylesheet" href="../_vendor/css/bootswatch-paper.bootstrap.min.css"-->
+	<!--link rel="stylesheet" href="../_vendor/fonts/font-awesome/font-awesome.min.css"-->
+	<link rel="stylesheet" href="style.css">
 	<script type="text/javascript" src="../_vendor/js/mock.js"></script>
-
-	<!-- Vendor JavaScript -->
-	<script src="../_vendor/js/jquery.min.js"></script>
-	<script src="../_vendor/js/bootstrap.min.js"></script>
-	<script src="../_vendor/js/moment-with-locales.min.js"></script>
-	<script src="../_vendor/js/js.cookie.min.js"></script>
-
-	<script>
-		/*********************************************************************/
-		/*                Callbacks for lightdm-webkit-greeter               */
-		/*********************************************************************/
-
-		/**
-		 * show_prompt callback.
-		 */
-		function show_prompt(text, type) {
-			// type is either "text" or "password"
-			prompt = document.getElementById("prompt");
-			prompt.innerHTML = text;
-			entry = document.getElementById("entry");
-			entry.value = "";    // clear entry
-			entry.type = type;
-			entry.focus();
-		}
-
-		/**
-		 * show_message callback.
-		 */
-		function show_message(text, type) {
-			if (text.length == 0)
-				return;
-			messages = document.getElementById("messages");
-			messages.style.visibility = "visible";
-			// type is either "info" or "error"
-			if (type == "error") {
-				text = "<font color=\"red\">" + text + "</font>";
-			}
-			text = text + "<br>";
-			messages.innerHTML = messages.innerHTML + text;
-		}
-
-		/**
-		 * authentication_complete callback.
-		 */
-		function authentication_complete() {
-			if (lightdm.is_authenticated) {
-				lightdm.start_session_sync(); // Start default session
-			} else {
-				show_message("Authentication Failed", "error");
-				setTimeout(start_authentication, 3000);
-			}
-		}
-
-		/**
-		 * autologin_timer_expired callback.
-		 */
-		function autologin_timer_expired(username) {
-			/* Stub.  Does nothing. */
-		}
-
-		/*********************************************************************/
-		/*                Functions local to this greeter                    */
-		/*********************************************************************/
-
-		/**
-		 * Clear messages
-		 */
-		function clear_messages() {
-			messages = document.getElementById("messages");
-			messages.innerHTML = "";
-			messages.style.visibility = "hidden";
-		}
-
-		/**
-		 * Initialize date and sets timer
-		 */
-		function initialize_date() {
-			format = 'L<br/>LTS';
-			datetime = document.getElementById("datetime");
-			moment.locale( window.navigator.languages );
-			datetime.innerHTML = moment().format( format );
-			setInterval( () => { datetime.innerHTML = moment().format( format ); }, 1000 );
-		}
-
-		/**
-		 * Populates the hostname
-		 */
-		function initialize_hostname() {
-			hostname = document.getElementById("hostname");
-			hostname.innerHTML = lightdm.hostname;
-		}
-
-		/**
-		 * Kickoff the authentication process
-		 */
-		function start_authentication() {
-			clear_messages();
-			initialize_date();
-			initialize_hostname();
-			lightdm.start_authentication();   // start with null userid, have pam prompt for userid.
-		}
-		
-		/**
-		 * handle the input from the entry field.
-		 */
-		function handle_input() {
-			entry = document.getElementById("entry");
-			lightdm.respond(entry.value);
-		}
-		
-		/**
-		 * handle the restart button.
-		 */
-		function handle_restart() {
-			if (lightdm.can_restart) {
-				lightdm.restart();
-			}
-		}
-		
-		/**
-		 * handle the shutdown button.
-		 */
-		function handle_shutdown() {
-			if (lightdm.can_shutdown) {
-				lightdm.shutdown();
-			}
-		}
-		
-		$( window ).load( () => {
-			start_authentication();
-		} );
-	</script>
-
+	<script type="text/javascript" src="../_vendor/js/jquery.min.js"></script>
+	<script type="text/javascript" src="../_vendor/js/bootstrap.min.js"></script>
+	<script type="text/javascript" src="../_vendor/js/moment-with-locales.min.js"></script>
+	<script type="text/javascript" src="../_vendor/js/js.cookie.min.js"></script>
+	<script type="text/javascript" src="script.js"></script>
 </head>
 
 <body>
 <div class="container">
-	<div class="dateBox" id="datetime"></div>
-	<div class="hostName" id="hostname">HOSTNAME</div>
+	<div class="dateBox" id="datetime" title="Date and time"></div>
+	<div class="hostName" id="hostname" title="Hostname">HOSTNAME</div>
 	<div class="topBox">
-		<svg onclick="javascript:handle_restart();" xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 0 50 50">
-			<path d="M 24.8125 6 A 2.0021961 2.0021961 0 1 0 25 10 C 33.321986 10 40 16.678014 40 25 C 40 33.321986 33.321986 40 25 40 C 16.678014 40 10 33.321986 10 25 C 10 21.072631 11.544923 17.514706 14 14.84375 L 14 19 A 2.0002 2.0002 0 1 0 18 19 L 18 10 L 18 8 L 16 8 L 7 8 A 2.0002 2.0002 0 0 0 6.8125 8 A 2.0021961 2.0021961 0 1 0 7 12 L 11.21875 12 C 8.0317805 15.389289 6 19.951151 6 25 C 6 35.478014 14.521986 44 25 44 C 35.478014 44 44 35.478014 44 25 C 44 14.521986 35.478014 6 25 6 A 2.0002 2.0002 0 0 0 24.8125 6 z" ></path>
-		</svg>
-		<svg onclick="javascript:handle_shutdown();" xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 0 50 50">
-			<path d="M 24.78125 1.96875 A 2.0002 2.0002 0 0 0 23 4 L 23 24 A 2.0002 2.0002 0 1 0 27 24 L 27 4 A 2.0002 2.0002 0 0 0 24.96875 1.96875 A 2.0002 2.0002 0 0 0 24.78125 1.96875 z M 14.96875 4.46875 A 2.0002 2.0002 0 0 0 14.75 4.5 A 2.0002 2.0002 0 0 0 14.03125 4.75 C 6.8161639 8.6855015 2 16.266667 2 25 C 2 37.68046 12.31954 48 25 48 C 37.68046 48 48 37.68046 48 25 C 48 16.25 43.074021 8.6852272 35.96875 4.75 A 2.0002441 2.0002441 0 1 0 34.03125 8.25 C 39.925979 11.514773 44 17.75 44 25 C 44 35.51954 35.51954 44 25 44 C 14.48046 44 6 35.51954 6 25 C 6 17.733333 9.9838361 11.514499 15.96875 8.25 A 2.0002 2.0002 0 0 0 14.96875 4.46875 z"></path>
-		</svg>
-<!--
-		<img src="power_button.png"/>
--->
+		<svg id="suspend" xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 0 30 30"><title>Suspend</title><path d="M 5 4 L 5 6 L 13.15625 6 L 5.3125 13.75 L 5 14.0625 L 5 14.46875 L 5 15 L 5 16 L 6 16 L 16 16 L 16 14 L 7.90625 14 L 15.6875 6.3125 L 16 6.03125 L 16 5.59375 L 16 5 L 16 4 L 15 4 L 5 4 z M 18 10 L 18 12 L 24.15625 12 L 18.3125 17.75 L 18 18.0625 L 18 18.46875 L 18 19 L 18 20 L 19 20 L 27 20 L 27 18 L 20.90625 18 L 26.6875 12.3125 L 27 12.03125 L 27 11.59375 L 27 11 L 27 10 L 26 10 L 18 10 z M 8 19 L 8 21 L 13.15625 21 L 8.3125 25.75 L 8 26.0625 L 8 26.46875 L 8 27 L 8 28 L 9 28 L 16 28 L 16 26 L 10.90625 26 L 15.6875 21.3125 L 16 21.03125 L 16 20.59375 L 16 20 L 16 19 L 15 19 L 8 19 z"></path></svg>
+		<svg id="hibernate" xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 0 30 30"><title>Hibernate</title><path d="M 16 4 C 9.3844277 4 4 9.3844277 4 16 C 4 22.615572 9.3844277 28 16 28 C 22.615572 28 28 22.615572 28 16 C 28 9.3844277 22.615572 4 16 4 z M 16 6 C 21.534692 6 26 10.465308 26 16 C 26 21.534692 21.534692 26 16 26 C 10.465308 26 6 21.534692 6 16 C 6 10.465308 10.465308 6 16 6 z M 15 10 L 15 22 L 17 22 L 17 10 L 15 10 z"></path></svg>
+		<svg id="restart" xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 0 50 50"><title>Restart</title><path d="M 24.8125 6 A 2.0021961 2.0021961 0 1 0 25 10 C 33.321986 10 40 16.678014 40 25 C 40 33.321986 33.321986 40 25 40 C 16.678014 40 10 33.321986 10 25 C 10 21.072631 11.544923 17.514706 14 14.84375 L 14 19 A 2.0002 2.0002 0 1 0 18 19 L 18 10 L 18 8 L 16 8 L 7 8 A 2.0002 2.0002 0 0 0 6.8125 8 A 2.0021961 2.0021961 0 1 0 7 12 L 11.21875 12 C 8.0317805 15.389289 6 19.951151 6 25 C 6 35.478014 14.521986 44 25 44 C 35.478014 44 44 35.478014 44 25 C 44 14.521986 35.478014 6 25 6 A 2.0002 2.0002 0 0 0 24.8125 6 z" ></path></svg>
+		<svg id="shutdown" xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 0 50 50"><title>Shutdown</title><path d="M 24.78125 1.96875 A 2.0002 2.0002 0 0 0 23 4 L 23 24 A 2.0002 2.0002 0 1 0 27 24 L 27 4 A 2.0002 2.0002 0 0 0 24.96875 1.96875 A 2.0002 2.0002 0 0 0 24.78125 1.96875 z M 14.96875 4.46875 A 2.0002 2.0002 0 0 0 14.75 4.5 A 2.0002 2.0002 0 0 0 14.03125 4.75 C 6.8161639 8.6855015 2 16.266667 2 25 C 2 37.68046 12.31954 48 25 48 C 37.68046 48 48 37.68046 48 25 C 48 16.25 43.074021 8.6852272 35.96875 4.75 A 2.0002441 2.0002441 0 1 0 34.03125 8.25 C 39.925979 11.514773 44 17.75 44 25 C 44 35.51954 35.51954 44 25 44 C 14.48046 44 6 35.51954 6 25 C 6 17.733333 9.9838361 11.514499 15.96875 8.25 A 2.0002 2.0002 0 0 0 14.96875 4.46875 z"></path></svg>
 	</div>
 	<div class="inputBox">
 		<div class="wrapper">
 			<div id="prompt"></div>
 			<form action="javascript: handle_input()">
+				<div id="prompt"></div>
 				<input id="entry" />
-				<span id="cancel" onclick="javascript:lightdm.start_authentication();">
-					<svg xmlns="http://www.w3.org/2000/svg" width="25px" height="25px" viewBox="10 10 30 30">
-						<path d="M 15.125 12.28125 L 12.28125 15.125 L 22.21875 25 L 12.28125 34.875 L 15.125 37.71875 L 25.0625 27.84375 L 35 37.71875 L 37.8125 34.875 L 27.90625 25 L 37.8125 15.125 L 35 12.28125 L 25.0625 22.15625 L 15.125 12.28125 z" ></path>
-					</svg>
-				</span>
+				<span style="position:relative; width:0;"><span style="display:block; position: absolute;top: -2px;left:0;width:70px;">
+					<svg id="guest" title="Login as guest" xmlns="http://www.w3.org/2000/svg" width="25px" height="25px" viewBox="0 0 24 24"><title>Login as guest</title><path d="M 12 3 C 9.791 3 8 4.791 8 7 C 8 9.209 9.791 11 12 11 C 14.209 11 16 9.209 16 7 C 16 4.791 14.209 3 12 3 z M 12 5 C 13.103 5 14 5.897 14 7 C 14 8.103 13.103 9 12 9 C 10.897 9 10 8.103 10 7 C 10 5.897 10.897 5 12 5 z M 12 13 C 5.923 13 4 17 4 17 L 4 20 L 20 20 L 20 17 C 20 17 18.077 13 12 13 z M 12 15 C 15.761 15 17.463 16.8215 18 17.5625 L 18 18 L 6 18 L 6 17.5625 C 6.553 16.8005 8.256 15 12 15 z"></path></svg>
+					<svg id="go" title="Next" xmlns="http://www.w3.org/2000/svg" width="25px" height="25px" viewBox="+03 +01 +30 +30"><title>Next</title><path d="M 12.96875 4.28125 L 11.53125 5.71875 L 21.8125 16 L 11.53125 26.28125 L 12.96875 27.71875 L 23.96875 16.71875 L 24.65625 16 L 23.96875 15.28125 L 12.96875 4.28125 z"></path></svg>
+					<svg id="cancel" title="Cancel" xmlns="http://www.w3.org/2000/svg" width="25px" height="25px" viewBox="10 10 30 30"><title>Cancel</title><path d="M 15.125 12.28125 L 12.28125 15.125 L 22.21875 25 L 12.28125 34.875 L 15.125 37.71875 L 25.0625 27.84375 L 35 37.71875 L 37.8125 34.875 L 27.90625 25 L 37.8125 15.125 L 35 12.28125 L 25.0625 22.15625 L 15.125 12.28125 z" ></path></svg>
+				</span></span>
+				<div class="sessions"><select id="session"></select></div>
 			</form>
 		</div>
 	</div>
