@@ -47,6 +47,15 @@ body {
 	box-sizing: border-box;
 }
 
+.bottomBox {
+	text-align: right;
+	padding: 15px;
+	box-sizing: border-box;
+	position: absolute;
+	right: 0;
+	bottom: 0;
+}
+
 .messageBox {
 	text-align: center;
 	visibility: hidden;

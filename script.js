@@ -74,12 +74,32 @@ function initialize_date() {
     setInterval( () => { datetime.innerHTML = moment().format( format ); }, 1000 );
 }
 
-/**
- * Populates the hostname
- */
-function initialize_hostname() {
-    hostname = document.getElementById("hostname");
-    hostname.innerHTML = lightdm.hostname;
+function initialize_languages(){
+    language = document.getElementById("language");
+    for(let i = 0; i < lightdm.languages.length; i++) {
+        let opt = lightdm.languages[i];
+        let el = document.createElement("option");
+        el.textContent = opt.name;
+        el.value = opt.key;
+        if (lightdm.language==opt.name) {
+            el.selected = true;
+        }
+        language.appendChild(el);
+    }
+}
+
+function initialize_layouts() {
+    layout = document.getElementById("layout");
+    for(let i = 0; i < lightdm.layouts.length; i++) {
+        let opt = lightdm.layouts[i];
+        let el = document.createElement("option");
+        el.textContent = opt.name;
+        el.value = opt.key;
+        if (lightdm.layout==opt.name) {
+            el.selected = true;
+        }
+        layout.appendChild(el);
+    }
 }
 
 /**
@@ -87,7 +107,6 @@ function initialize_hostname() {
  */
 function initialize_sessions() {
     session = document.getElementById("session");
-    let test = lightdm.sessions;
     for(let i = 0; i < lightdm.sessions.length; i++) {
         let opt = lightdm.sessions[i];
         let el = document.createElement("option");
@@ -101,10 +120,17 @@ function initialize_sessions() {
 }
 
 /**
+ * Populates the hostname
+ */
+function initialize_hostname() {
+    hostname = document.getElementById("hostname");
+    hostname.innerHTML = lightdm.hostname;
+}
+
+/**
  * Handle the button's visibility.
  */
 function initialize_visibility() {
-    $('svg').attr("onClick", "javascript:handle_buttons(this);");
     if ( ! lightdm.has_guest_account ) {
         document.getElementById("guest").style.display = 'none';
     }
@@ -133,8 +159,10 @@ function initialize_visibility() {
 function start_authentication() {
     clear_messages();
     initialize_date();
-    initialize_hostname();
+    initialize_languages();
+    initialize_layouts();
     initialize_sessions();
+    initialize_hostname();
     initialize_visibility();
     lightdm.start_authentication();   // start with null userid, have pam prompt for userid.
     document.getElementById("entry").focus();
@@ -144,10 +172,9 @@ function start_authentication() {
  * Handle the input from the entry field.
  */
 function handle_input() {
-    let input = document.getElementById("entry");
-    let username = document.getElementById("entry").value;
-    if ( !( username === "" ) ) {
-        lightdm.respond(username);
+    let value = document.getElementById("entry").value;
+    if ( !( value === "" ) ) {
+        lightdm.respond(value);
     }
 }
 
@@ -186,8 +213,29 @@ function handle_buttons(e) {
 }
 
 /**
+ * Handle the change of selects.
+ */
+function handle_selects(e) {
+    switch(e.id) {
+        case "session":
+            lightdm.session = e.value;
+            break;
+        case "layout":
+            lightdm.layout = e.value;
+            break;
+        case "language":
+            lightdm.language = e.value;
+            break;
+        default:
+            break;
+    }
+}
+
+/**
  * Starts the authentification.
  */
 $( window ).load( () => {
     start_authentication();
+    $('svg').attr("onClick", "javascript:handle_buttons(this);");
+    $('select').attr("onChange", "javascript:handle_selects(this);");
 } );
