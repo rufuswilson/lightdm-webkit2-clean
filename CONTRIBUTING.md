@@ -36,12 +36,12 @@ User <YOUR USERNAME>
     * Start SSH-AGENT: `eval $(ssh-agent -s)`
     * Add identity: `ssh-add`
     * Test if working: `ssh -T git@gitlab.com`
-   
+
 **NOTE:** *More info on how to start automatically SSH-AGENT with GIT BASH there: https://help.github.com/articles/working-with-ssh-key-passphrases/#auto-launching-ssh-agent-on-msysgit*
 
 ### GIT common commands
-* Clone full repository in folder named `master`: `git clone git@gitlab.com:cdev/lightdm-webkit2-greeter-clean.git master`
-* Clone only `master` branch in folder named `master`: `git clone git@gitlab.com:cdev/lightdm-webkit2-greeter-clean.git --branch master --single-branch master`
+* Clone full repository in folder named `master`: `git clone git@github.com:rufuswilson/lightdm-webkit2-clean.git master`
+* Clone only `master` branch in folder named `master`: `git clone git@github.com:rufuswilson/lightdm-webkit2-clean.git --branch master --single-branch master`
 * Check what changes have not been committed: `git status`
 * Check differences between committed version and current version: `git diff <PATH TO FILE/FOLDER>`
 * Add whole file/folder to be committed: `git add <PATH TO FILE/FOLDER>`
